@@ -1,5 +1,5 @@
 'use strict'
-const spider = new(require('./src/spider'))
+const spider = new (require('./src/spider'))
 const fs = require("fs")
 const moment = require('moment')
 const magnet2torrent = require('./src/magnet2info')
@@ -15,6 +15,7 @@ const minInfoHashLength = 1000
 
 // 爬取磁力infohash
 spider.on('ensureHash', (infoHash, addr) => {
+    console.log('获取到infoHash: ', infoHash)
     if (infoHashArr.indexOf(infoHash) !== -1) {
         return
     }
@@ -33,10 +34,10 @@ spider.on('ensureHash', (infoHash, addr) => {
 spider.listen()
 
 // 解析磁力infohash 并入库
-const startParse = async function() {
+const startParse = async function () {
     let infohash = infoHashArr.pop()
     if (!infohash) {
-        setTimeout(function() {
+        setTimeout(function () {
             startParse()
         }, 1000);
         return
