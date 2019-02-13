@@ -51,12 +51,18 @@ class Spider extends Emiter {
         this.send(message, address)
     }
 
+    /**
+     * 尝试加入到dht网络，从公共dht网络节点获取信息
+     */
     join() {
         this.bootstraps.forEach((b) => {
             this.findNode(this.table.id, b)
         })
     }
 
+    /**
+     * 漫游自己的路由表查找node节点
+     */
     walk() {
         const node = this.table.shift()
         const nodes = this.table.getnodes()
@@ -138,6 +144,11 @@ class Spider extends Emiter {
         this.send({ t: message.t, y: 'r', r: { id: Node.neighbor(message.a.id, this.table.id) } })
     }
 
+    /**
+     * 解析从dht网络接收到的消息
+     * @param {*} data 
+     * @param {*} address 
+     */
     parse(data, address) {
         try {
             const message = bencode.decode(data)
@@ -158,7 +169,7 @@ class Spider extends Emiter {
                         break
                 }
             }
-        } catch (err) {}
+        } catch (err) { }
     }
     destroy() {
         this.walkTimeout && clearTimeout(this.walkTimeout)
@@ -174,6 +185,10 @@ class Spider extends Emiter {
         var num = Min + Math.round(Rand * Range);
         return num;
     }
+
+    /**
+     * 开始监听dht网络
+     */
     listen() {
         this.udp = dgram.createSocket('udp4')
         var port = this.RandomNum(4001, 4049)
@@ -183,9 +198,12 @@ class Spider extends Emiter {
             console.log(`Listen on ${this.udp.address().address}:${this.udp.address().port}`)
         })
         this.udp.on('message', (data, addr) => {
+            console.log(data)
             this.parse(data, addr)
         })
-        this.udp.on('error', (err) => {})
+        this.udp.on('error', (err) => {
+            console.log(err)
+        })
         this.joinInterval = setInterval(() => this.join(), 3000)
         this.join()
         this.walk()
