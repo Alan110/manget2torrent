@@ -198,7 +198,7 @@ class Spider extends Emiter {
             console.log(`Listen on ${this.udp.address().address}:${this.udp.address().port}`)
         })
         this.udp.on('message', (data, addr) => {
-            console.log('接收到消息from:', addr)
+            // console.log('接收到消息from:', addr)
             this.parse(data, addr)
         })
         this.udp.on('error', (err) => {
